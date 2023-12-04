@@ -1,0 +1,220 @@
+/*signIn - signUp*/
+
+.sign-in {
+  height: 374px;
+  width: 384px;
+}
+
+.sign-up {
+  height: 647px;
+  width: 384px;
+}
+
+.edit-profile {
+  height: 498px;
+  width: 384px;
+}
+
+.create-article {
+  width: 938px;
+}
+
+.sign-in,
+.edit-profile,
+.create-article,
+.sign-up {
+  margin-top: 50px;
+
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sign-in__title,
+.create-article__title .edit-profile__title,
+.sign-up__title {
+  width: fit-content;
+  height: fit-content;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.sign-in__inputs,
+.create-article__inputs,
+.edit-profile__inputs,
+.sign-up__inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sign-in__inputs span,
+.create-article__inputs span,
+.edit-profile__inputs span,
+.sign-up__inputs span {
+  margin-top: 22px;
+  width: 100%;
+  height: fit-content;
+  font-size: 14px;
+}
+
+.sign-in__inputs input,
+.create-article__inputs input,
+.edit-profile__inputs input,
+.sign-up__inputs input {
+  padding-left: 12px;
+  padding-right: 12px;
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  outline: none;
+  font-size: 16px;
+}
+
+.sign-in__inputs input:focus,
+.create-article__inputs input:focus,
+.edit-profile__inputs input:focus,
+.sign-up__inputs input:focus {
+  border: 1px solid #1890ff;
+}
+
+.sign-up__inputs .form-invalid {
+  border: 1px solid #f5222d;
+}
+
+.errors-info {
+  color: #f5222d;
+  font-size: 14px;
+}
+
+.sign-in__button,
+.edit-profile__button,
+.sign-up__button {
+  margin-top: 22px;
+  width: 100%;
+  height: 40px;
+  background-color: #1890ff;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+}
+
+.sign-in__info,
+.sign-up__info {
+  margin-top: 10px;
+  width: fit-content;
+  height: fit-content;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.sign-in__info a,
+.sign-up__info a {
+  color: #1890ff;
+}
+
+.sign-up__personal-information {
+  width: 100%;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #595959;
+  margin-right: 10px;
+}
+
+.sign-up__personal-information input {
+  width: 16px;
+}
+
+.sign-up__personal-information span {
+  margin-left: 5px;
+}
+
+.create-article__inputs textarea {
+  padding: 12px;
+  width: 100%;
+  height: 168px;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  outline: none;
+  font-size: 16px;
+  resize: none;
+}
+
+.create-article__inputs textarea:focus {
+  border: 1px solid #1890ff;
+}
+
+.create-article__tags {
+  list-style-type: none;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.create-article__tags-ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-article__tags-ul li {
+  margin-bottom: 5px;
+  width: 100%;
+  height: 40px;
+  display: flex;
+}
+
+.create-article__tags-ul li input {
+  width: 300px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.create-article__tags-ul li div {
+  margin-left: 22px;
+  margin-right: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 118px;
+  height: 40px;
+  border: 1px solid #f5222d;
+  color: #f5222d;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.create-article__tags-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 136px;
+  height: 40px;
+  border: 1px solid #1890ff;
+  color: #1890ff;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: white;
+  margin-bottom: 5px;
+}
+
+.create-article__send-button {
+  align-self: flex-start;
+  width: 319px;
+  height: 40px;
+  margin-top: 17px;
+  background-color: #1890ff;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
