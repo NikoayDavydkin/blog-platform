@@ -31,13 +31,15 @@ const PostItem = ({ articleItem, putLike }) => {
   }
 
   const returnNone = (value) => {
-    let str = value.replace(/\s/g, '');
+    if (value) {
+      let str = value.replace(/\s/g, '');
 
-    if (str.length === 0) {
-      return 'none';
-    } else {
-      return value;
+      if (str.length !== 0) {
+        return value;
+      }
     }
+
+    return 'none';
   };
 
   const returnStringSlice = (value, number) => {
