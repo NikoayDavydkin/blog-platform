@@ -1,1 +1,1 @@
-https://blog-platform-one-mocha.vercel.app/
+https://blog-platform-murex.vercel.app/
