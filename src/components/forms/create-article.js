@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { withRouter } from 'react-router-dom';
 
-const CreateArticle = ({ postArticle, history }) => {
+const CreateArticle = ({ postArticle, createArticle, name, dataArticles, history }) => {
   const {
     register,
     formState: { errors, isValid },
@@ -24,15 +24,44 @@ const CreateArticle = ({ postArticle, history }) => {
       massTags.push(rest[key]);
     }
 
-    postArticle({
-      title: title,
-      description: description,
-      body: text,
-      tags: [...massTags],
-    });
+    if (createArticle) {
+      postArticle(
+        {
+          title: title,
+          description: description,
+          body: text,
+          tags: [...massTags],
+        },
+        createArticle
+      );
+    } else {
+      postArticle(
+        {
+          title: title,
+          description: description,
+          body: text,
+          tags: [...massTags],
+        },
+        createArticle,
+        dataArticles.slug
+      );
+    }
 
     reset();
     history.push('/');
+  };
+
+  const returnRequred = () => {
+    if (createArticle) {
+      return {
+        value: true,
+        message: 'The field must be filled in',
+      };
+    } else {
+      return {
+        value: false,
+      };
+    }
   };
 
   const [tags, setTags] = useState([
@@ -64,14 +93,14 @@ const CreateArticle = ({ postArticle, history }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="app__create-article create-article">
-      <span className="create-article__title">Create new article</span>
+      <span className="create-article__title">{name}</span>
       <div className="create-article__inputs">
         {/*Title*/}
         <span>Tiltle</span>
         <input
           className={errors?.title && 'form-invalid'}
           {...register('title', {
-            required: 'The field must be filled in',
+            required: returnRequred(),
             minLength: {
               value: 1,
               message: 'Less than 1 characters entered',
@@ -87,7 +116,7 @@ const CreateArticle = ({ postArticle, history }) => {
         <input
           className={errors?.description && 'form-invalid'}
           {...register('description', {
-            required: 'The field must be filled in',
+            required: returnRequred(),
             minLength: {
               value: 1,
               message: 'Less than 1 characters entered',
@@ -103,7 +132,7 @@ const CreateArticle = ({ postArticle, history }) => {
         <textarea
           className={errors?.text && 'form-invalid'}
           {...register('text', {
-            required: 'The field must be filled in',
+            required: returnRequred(),
             minLength: {
               value: 1,
               message: 'Less than 1 characters entered',

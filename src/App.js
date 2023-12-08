@@ -1,7 +1,10 @@
 /* eslint-disable semi */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
+import * as actions from './actions';
 import CreateArticle from './components/forms/create-article';
 import EditProfile from './components/forms/edit-profile';
 import SignIn from './components/forms/sign-in';
@@ -9,27 +12,26 @@ import SignUp from './components/forms/sign-up';
 import Header from './components/header/header';
 import PostList from './components/post-list/post-list';
 import ArticlesItem from './components/articles-item/articles-item';
-import EditArticle from './components/forms/edit-article';
 import { getResponse, getResponseToken, getResponseBody, getResponseBodyToken } from './services';
 
-function App() {
-  //массив со статьями
-  const [articles, setArticles] = useState([]);
-  //проверка в системе
-  const [authorised, setAuthorised] = useState(JSON.parse(localStorage.getItem('user')) ? true : false);
-  //последняя страница
-  const [total, setTotal] = useState();
-  //на какой мы странице
-  const [page, setPage] = useState(1);
-  //данные пользователя
-  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
-  //статья
-  const [articlesItem, setArticlesItem] = useState();
-  //id статьи
-  const [articlesItemId, setArticlesItemId] = useState();
-  //loading
-  const [loading, setLoading] = useState(true);
-
+function App({
+  loading,
+  setLoading,
+  articles,
+  setArticles,
+  total,
+  setTotal,
+  page,
+  setPage,
+  articlesItemId,
+  setArticlesItemId,
+  articlesItem,
+  setArticlesItem,
+  authorised,
+  setAuthorised,
+  userData,
+  setUserData,
+}) {
   //получить articles не вощел в систему
   useEffect(() => {
     async function getArticles() {
@@ -59,8 +61,6 @@ function App() {
         setTotal(data.articlesCount);
         setArticles(data.articles);
         setLoading(false);
-      } else {
-        alert('Error');
       }
     }
     if (userData && loading) {
@@ -76,8 +76,6 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setArticlesItem(data.article);
-      } else {
-        alert('Статья не получена');
       }
     }
 
@@ -95,15 +93,13 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setArticlesItem(data.article);
-      } else {
-        alert('Статья не получена');
       }
     }
 
     if (userData && articlesItemId) {
       getArticlesItem();
     }
-  }, [articlesItemId, userData]);
+  }, [articlesItemId, userData, loading]);
 
   // зарегать ползователя
   async function registeringNewUser(value) {
@@ -186,8 +182,6 @@ function App() {
         await response.json();
         setUserData(userData);
         setLoading(true);
-      } else {
-        alert('None like error');
       }
     } else if (authorised) {
       const response = await getResponseToken(`articles/${String(id)}/favorite`, 'DELETE', userData.token);
@@ -196,57 +190,53 @@ function App() {
         await response.json();
         setUserData(userData);
         setLoading(true);
+      }
+    }
+  }
+
+  //function создать статью,  редкатировать статью
+
+  async function postArticle(value, createArticle, id) {
+    // создание
+    if (createArticle) {
+      let article = {
+        article: {
+          title: value.title,
+          description: value.description,
+          body: value.body,
+          tagList: [...value.tags],
+        },
+      };
+
+      const response = await getResponseBodyToken('articles', 'POST', article, userData.token);
+
+      if (response.ok) {
+        await response.json();
+        setLoading(true);
+      }
+
+      //редактирование
+    } else {
+      let newObj = {};
+
+      for (let i in value) {
+        if (value[i] !== '') {
+          newObj[i] = value[i];
+        }
+      }
+
+      let article = {
+        article: { ...newObj },
+      };
+
+      const response = await getResponseBodyToken(`articles/${String(id)}`, 'PUT', article, userData.token);
+
+      if (response.ok) {
+        await response.json();
+        setLoading(true);
       } else {
-        alert('None like error');
+        alert('None edit article');
       }
-    }
-  }
-
-  //function создать статью
-
-  async function postArticle(value) {
-    let article = {
-      article: {
-        title: value.title,
-        description: value.description,
-        body: value.body,
-        tagList: [...value.tags],
-      },
-    };
-
-    const response = await getResponseBodyToken('articles', 'POST', article, userData.token);
-
-    if (response.ok) {
-      await response.json();
-      setLoading(true);
-    } else {
-      alert('None create article');
-    }
-  }
-
-  //редкатировать статью
-
-  async function editArticle(value, id) {
-    let newObj = {};
-
-    for (let i in value) {
-      if (value[i] !== '') {
-        newObj[i] = value[i];
-      }
-    }
-
-    let article = {
-      article: { ...newObj },
-    };
-
-    const response = await getResponseBodyToken(`articles/${String(id)}`, 'PUT', article, userData.token);
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      setLoading(true);
-    } else {
-      alert('None edit article');
     }
   }
 
@@ -281,15 +271,33 @@ function App() {
             render={(match) => {
               setArticlesItemId(match.match.params.id);
               if (articlesItem) {
-                return <ArticlesItem deleteArticle={deleteArticle} userData={userData} data={articlesItem} />;
+                return (
+                  <ArticlesItem
+                    deleteArticle={deleteArticle}
+                    userData={userData}
+                    data={articlesItem}
+                    putLike={putLike}
+                  />
+                );
               }
             }}
           />
-          <Route path="/new-article" render={() => <CreateArticle postArticle={postArticle} />} />
+
           <Route path="/profile" render={() => <EditProfile editProfile={editProfile} />} />
           <Route
+            path="/new-article"
+            render={() => <CreateArticle postArticle={postArticle} createArticle={true} name={'Create new article'} />}
+          />
+          <Route
             path="/edit-article"
-            render={() => <EditArticle dataArticles={articlesItem} editArticle={editArticle} />}
+            render={() => (
+              <CreateArticle
+                postArticle={postArticle}
+                createArticle={false}
+                name={'Edit article'}
+                dataArticles={articlesItem}
+              />
+            )}
           />
           <Route path="/sign-up" render={() => <SignUp registeringNewUser={registeringNewUser} />} />
           <Route path="/sign-in" render={() => <SignIn loginSystem={loginSystem} />} />
@@ -311,4 +319,49 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+    articles: state.articles,
+    total: state.total,
+    page: state.page,
+    articlesItemId: state.articlesItemId,
+    articlesItem: state.articlesItem,
+    authorised: state.authorised,
+    userData: state.userData,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  const { setLoading, setArticles, setTotal, setPage, setArticlesItemId, setArticlesItem, setAuthorised, setUserData } =
+    bindActionCreators(actions, dispatch);
+
+  return {
+    setLoading: (value) => {
+      setLoading(value);
+    },
+    setArticles: (value) => {
+      setArticles(value);
+    },
+    setTotal: (value) => {
+      setTotal(value);
+    },
+    setPage: (value) => {
+      setPage(value);
+    },
+    setArticlesItemId: (value) => {
+      setArticlesItemId(value);
+    },
+    setArticlesItem: (value) => {
+      setArticlesItem(value);
+    },
+    setAuthorised: (value) => {
+      setAuthorised(value);
+    },
+    setUserData: (value) => {
+      setUserData(value);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
