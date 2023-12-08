@@ -5,7 +5,10 @@ import newDate from 'new-date';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+<<<<<<< Updated upstream
 import { v4 as uuidv4 } from 'uuid';
+=======
+>>>>>>> Stashed changes
 
 import * as actions from '../../actions';
 import info from '../../img/info.png';
@@ -120,8 +123,13 @@ const PostItem = ({ articleItem, putLike, deleteArticle, userData, history, tool
           <span className="post-list__title-likes">{favoritesCount}</span>
         </div>
         <ul className="post-list__tags">
+<<<<<<< Updated upstream
           {tagListFixed.map((tag) => {
             return <li key={tag.id}>{returnStringSlice(returnNone(tag.value), 15)}</li>;
+=======
+          {tagLocal.map((tag) => {
+            return <li key={tagLocal.indexOf(tag)}>{returnStringSlice(returnNone(tag), 15)}</li>;
+>>>>>>> Stashed changes
           })}
         </ul>
         <span className="post-list__text">{returnStringSlice(returnNone(description), 60)}</span>
