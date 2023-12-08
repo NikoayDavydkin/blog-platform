@@ -5,6 +5,7 @@ import newDate from 'new-date';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import * as actions from '../../actions';
 import info from '../../img/info.png';
@@ -25,11 +26,19 @@ const PostItem = ({ articleItem, putLike, deleteArticle, userData, history, tool
   };
 
   let tagLocal = [];
+  let tagListFixed = [];
 
   if (tagList.length > 4) {
     tagLocal = [...tagList.slice(0, 4)];
   } else {
     tagLocal = [...tagList];
+  }
+
+  for (let i of tagLocal) {
+    tagListFixed.push({
+      id: uuidv4(),
+      value: i,
+    });
   }
 
   const returnNone = (value) => {
@@ -111,8 +120,8 @@ const PostItem = ({ articleItem, putLike, deleteArticle, userData, history, tool
           <span className="post-list__title-likes">{favoritesCount}</span>
         </div>
         <ul className="post-list__tags">
-          {tagLocal.map((tag) => {
-            return <li key={tagLocal.indexOf(tag)}>{returnStringSlice(returnNone(tag), 15)}</li>;
+          {tagListFixed.map((tag) => {
+            return <li key={tag.id}>{returnStringSlice(returnNone(tag.value), 15)}</li>;
           })}
         </ul>
         <span className="post-list__text">{returnStringSlice(returnNone(description), 60)}</span>
